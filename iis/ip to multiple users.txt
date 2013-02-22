@@ -1,0 +1,11 @@
+host="[servername]" NOT cs_username="\-" 
+|  DEDUP cs_username, c_ip  
+| stats dc(c_ip) as c_ip_count by cs_username 
+| where c_ip_count > 1 
+| join max=0 cs_username [search host="[servername]"] 
+| fields cs_username, c_ip_count, c_ip 
+| DEDUP cs_username, c_ip_count, c_ip
+| eval cs_username=lower(cs_username)
+| fields cs_username, c_ip 
+| dedup cs_username, c_ip 
+| sort cs_username   
