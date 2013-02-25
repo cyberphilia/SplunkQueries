@@ -1,0 +1,1 @@
+index=main sourcetype="snort" | head 10000 | rex "(?i)^[^\\]]*\\]\\s+(?P<Message>.+?)\\s+\\[" | top 50 Message
