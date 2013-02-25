@@ -1,0 +1,1 @@
+access-list inside_access_in denied | rex "(?i) .*? (?P<Remote_IP>\\outside/\\d+\\.\\d+\\.\\d+\\.\\d+)(?=\\()" | rex "(?i) .*? (?P<Host_IP>\\inside/\\d+\\.\\d+\\.\\d+\\.\\d+)(?=\\()" | Replace "inside/*" with "*" in Host_IP | Replace "outside/*" with "*" in Remote_IP | Fields Host_IP,Remote_IP | stats count by Host_IP,Remote_IP
