@@ -1,0 +1,7 @@
+sourcetype="cisco_wsa_squid" 
+AND sc_bytes > 0 
+AND s_hostname="*" 
+| stats sum(sc_bytes) as bytes by s_hostname 
+| eval megabytes= bytes/1048576
+| fields s_hostname, megabytes
+|sort -megabytes,s_hostname

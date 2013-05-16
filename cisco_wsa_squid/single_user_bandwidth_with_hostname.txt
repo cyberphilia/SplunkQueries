@@ -1,0 +1,8 @@
+sourcetype="cisco_wsa_squid" 
+AND sc_bytes > 0 
+AND cs_username="*replace_with_username*" 
+| rex "(?i)\".*?\\\\(?P<username>\\w+)(?=@)" 
+| stats sum(sc_bytes) as bytes by username,s_hostname 
+| eval megabytes= bytes/1048576
+| fields username, megabytes,s_hostname 
+|sort -megabytes,username,s_hostname
