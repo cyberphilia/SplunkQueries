@@ -1,0 +1,18 @@
+earliest=-4hr host="your_juniper_webvpn_ip" sourcetype="udp:514" "VPN Tunneling: Session started"
+| rex field=_raw "(?i) \- ive \- \[(?P<clientip>[^\]]+)"
+| rex field=_raw "(?i)] ([\w]*\\\\)?(?P<user>[^\(]+)"
+| rex field=_raw "(?i) IPv4 address (?P<internal_ip>[^,]+)"
+| rex field=_raw "(?i) hostname (?P<hostname>[\w-]+)"
+| eval user=lower(user) 
+| eval hostname=lower(hostname) 
+| JOIN type=left hostname, internal_ip
+
+[
+SEARCH earliest=-4hr dhcprequest sourcetype="dns_syslog"
+| rex field=_raw "(?i) from (?P<macaddress>[\w:]+)"
+| rex field=_raw "(?i) \((?P<hostname>[\w-]+)\) via"
+| rex field=_raw "(?i) for (?P<internal_ip>[\w\.]+)"
+| eval hostname=lower(hostname) 
+]
+
+| table user, clientip,internal_ip,hostname,internal_ip,macaddress
